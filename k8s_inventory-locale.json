@@ -1,0 +1,706 @@
+{
+    "deployments": [
+        {
+            "name": "argocd-applicationset-controller",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "applicationset-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-applicationset-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-dex-server",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "dex-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-dex-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-notifications-controller",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "notifications-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-notifications-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-redis",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "redis",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-redis",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-repo-server",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "repo-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-repo-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-server",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "cert-manager",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "cert-manager",
+                "app.kubernetes.io/component": "controller",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "cert-manager",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "cert-manager-cainjector",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "cainjector",
+                "app.kubernetes.io/component": "cainjector",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "cainjector",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "cert-manager-webhook",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "webhook",
+                "app.kubernetes.io/component": "webhook",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "webhook",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "kubeview",
+            "namespace": "default",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/instance": "kubeview",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "kubeview",
+                "app.kubernetes.io/version": "0.1.31",
+                "helm.sh/chart": "kubeview-0.1.31"
+            },
+            "creation_timestamp": "2024-10-01T14:29:38+00:00"
+        },
+        {
+            "name": "ingress-nginx-controller",
+            "namespace": "ingress-nginx",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "controller",
+                "app.kubernetes.io/instance": "ingress-nginx",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "ingress-nginx",
+                "app.kubernetes.io/part-of": "ingress-nginx",
+                "app.kubernetes.io/version": "1.10.1",
+                "helm.sh/chart": "ingress-nginx-4.10.1"
+            },
+            "creation_timestamp": "2024-05-27T14:54:53+00:00"
+        },
+        {
+            "name": "coredns",
+            "namespace": "kube-system",
+            "replicas": 2,
+            "available_replicas": 2,
+            "labels": {
+                "k8s-app": "kube-dns"
+            },
+            "creation_timestamp": "2024-05-23T14:47:51+00:00"
+        },
+        {
+            "name": "metrics-server",
+            "namespace": "kube-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/instance": "metrics-server",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "metrics-server",
+                "app.kubernetes.io/version": "0.7.1",
+                "helm.sh/chart": "metrics-server-3.12.1"
+            },
+            "creation_timestamp": "2024-06-18T15:08:48+00:00"
+        },
+        {
+            "name": "skooner",
+            "namespace": "kube-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": null,
+            "creation_timestamp": "2024-06-18T15:10:30+00:00"
+        },
+        {
+            "name": "simplest-collector",
+            "namespace": "observability",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "opentelemetry-collector",
+                "app.kubernetes.io/instance": "observability.simplest",
+                "app.kubernetes.io/managed-by": "opentelemetry-operator",
+                "app.kubernetes.io/name": "simplest-collector",
+                "app.kubernetes.io/part-of": "opentelemetry",
+                "app.kubernetes.io/version": "latest"
+            },
+            "creation_timestamp": "2024-09-06T07:51:43+00:00"
+        },
+        {
+            "name": "opentelemetry-operator-controller-manager",
+            "namespace": "opentelemetry-operator-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/name": "opentelemetry-operator",
+                "control-plane": "controller-manager"
+            },
+            "creation_timestamp": "2024-09-05T14:42:11+00:00"
+        }
+    ],
+    "replicasets": [
+        {
+            "name": "argocd-applicationset-controller-57c4f84c48",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "applicationset-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-applicationset-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "57c4f84c48"
+            },
+            "creation_timestamp": "2024-08-30T10:38:40+00:00"
+        },
+        {
+            "name": "argocd-applicationset-controller-7f876c9499",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "applicationset-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-applicationset-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "7f876c9499"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-dex-server-68c4cbd697",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "dex-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-dex-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "68c4cbd697"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-dex-server-79d6b979db",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "dex-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-dex-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "79d6b979db"
+            },
+            "creation_timestamp": "2024-08-30T10:38:41+00:00"
+        },
+        {
+            "name": "argocd-notifications-controller-68bd5469fd",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "notifications-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-notifications-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "68bd5469fd"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-redis-ffb567cd6",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "redis",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-redis",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "ffb567cd6"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-repo-server-558575c75b",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "repo-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-repo-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "558575c75b"
+            },
+            "creation_timestamp": "2024-08-30T12:12:30+00:00"
+        },
+        {
+            "name": "argocd-repo-server-59d5969d4c",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "repo-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-repo-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "59d5969d4c"
+            },
+            "creation_timestamp": "2024-08-30T10:38:40+00:00"
+        },
+        {
+            "name": "argocd-repo-server-5d6bf444f7",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "repo-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-repo-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "5d6bf444f7"
+            },
+            "creation_timestamp": "2024-08-30T12:08:54+00:00"
+        },
+        {
+            "name": "argocd-repo-server-6ddb898b",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "repo-server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-repo-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "6ddb898b"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-server-64844bbdff",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "64844bbdff"
+            },
+            "creation_timestamp": "2024-08-30T10:38:40+00:00"
+        },
+        {
+            "name": "argocd-server-859c798c9d",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "859c798c9d"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        },
+        {
+            "name": "argocd-server-8d5ff884f",
+            "namespace": "argocd",
+            "replicas": 0,
+            "available_replicas": null,
+            "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "8d5ff884f"
+            },
+            "creation_timestamp": "2024-08-30T12:08:54+00:00"
+        },
+        {
+            "name": "argocd-server-cdb767bfb",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "server",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-server",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0",
+                "pod-template-hash": "cdb767bfb"
+            },
+            "creation_timestamp": "2024-08-30T12:12:30+00:00"
+        },
+        {
+            "name": "cert-manager-796cbd6574",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "cert-manager",
+                "app.kubernetes.io/component": "controller",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "cert-manager",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5",
+                "pod-template-hash": "796cbd6574"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "cert-manager-cainjector-9b74bc658",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "cainjector",
+                "app.kubernetes.io/component": "cainjector",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "cainjector",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5",
+                "pod-template-hash": "9b74bc658"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "cert-manager-webhook-7ddfd7c4bd",
+            "namespace": "cert-manager",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app": "webhook",
+                "app.kubernetes.io/component": "webhook",
+                "app.kubernetes.io/instance": "cert-manager",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "webhook",
+                "app.kubernetes.io/version": "v1.14.5",
+                "helm.sh/chart": "cert-manager-v1.14.5",
+                "pod-template-hash": "7ddfd7c4bd"
+            },
+            "creation_timestamp": "2024-05-27T14:42:35+00:00"
+        },
+        {
+            "name": "kubeview-64fd5d8b8c",
+            "namespace": "default",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/instance": "kubeview",
+                "app.kubernetes.io/name": "kubeview",
+                "pod-template-hash": "64fd5d8b8c"
+            },
+            "creation_timestamp": "2024-10-01T14:29:38+00:00"
+        },
+        {
+            "name": "ingress-nginx-controller-c8f499cfc",
+            "namespace": "ingress-nginx",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "controller",
+                "app.kubernetes.io/instance": "ingress-nginx",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "ingress-nginx",
+                "app.kubernetes.io/part-of": "ingress-nginx",
+                "app.kubernetes.io/version": "1.10.1",
+                "helm.sh/chart": "ingress-nginx-4.10.1",
+                "pod-template-hash": "c8f499cfc"
+            },
+            "creation_timestamp": "2024-05-27T14:54:53+00:00"
+        },
+        {
+            "name": "coredns-76f75df574",
+            "namespace": "kube-system",
+            "replicas": 2,
+            "available_replicas": 2,
+            "labels": {
+                "k8s-app": "kube-dns",
+                "pod-template-hash": "76f75df574"
+            },
+            "creation_timestamp": "2024-05-23T14:47:55+00:00"
+        },
+        {
+            "name": "metrics-server-8549dcfdd6",
+            "namespace": "kube-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/instance": "metrics-server",
+                "app.kubernetes.io/name": "metrics-server",
+                "pod-template-hash": "8549dcfdd6"
+            },
+            "creation_timestamp": "2024-06-18T15:08:48+00:00"
+        },
+        {
+            "name": "skooner-6cc7d7d64",
+            "namespace": "kube-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "k8s-app": "skooner",
+                "pod-template-hash": "6cc7d7d64"
+            },
+            "creation_timestamp": "2024-06-18T15:10:30+00:00"
+        },
+        {
+            "name": "simplest-collector-588b94d664",
+            "namespace": "observability",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "opentelemetry-collector",
+                "app.kubernetes.io/instance": "observability.simplest",
+                "app.kubernetes.io/managed-by": "opentelemetry-operator",
+                "app.kubernetes.io/name": "simplest-collector",
+                "app.kubernetes.io/part-of": "opentelemetry",
+                "app.kubernetes.io/version": "latest",
+                "pod-template-hash": "588b94d664"
+            },
+            "creation_timestamp": "2024-09-06T07:51:43+00:00"
+        },
+        {
+            "name": "opentelemetry-operator-controller-manager-597874dcb8",
+            "namespace": "opentelemetry-operator-system",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/name": "opentelemetry-operator",
+                "control-plane": "controller-manager",
+                "pod-template-hash": "597874dcb8"
+            },
+            "creation_timestamp": "2024-09-05T14:42:11+00:00"
+        }
+    ],
+    "statefulsets": [
+        {
+            "name": "argocd-application-controller",
+            "namespace": "argocd",
+            "replicas": 1,
+            "available_replicas": 1,
+            "labels": {
+                "app.kubernetes.io/component": "application-controller",
+                "app.kubernetes.io/instance": "argocd",
+                "app.kubernetes.io/managed-by": "Helm",
+                "app.kubernetes.io/name": "argocd-application-controller",
+                "app.kubernetes.io/part-of": "argocd",
+                "app.kubernetes.io/version": "v2.12.3",
+                "helm.sh/chart": "argo-cd-7.5.0"
+            },
+            "creation_timestamp": "2024-08-30T10:32:25+00:00"
+        }
+    ],
+    "nodes": [
+        {
+            "name": "docker-desktop",
+            "labels": {
+                "beta.kubernetes.io/arch": "amd64",
+                "beta.kubernetes.io/os": "linux",
+                "kubernetes.io/arch": "amd64",
+                "kubernetes.io/hostname": "docker-desktop",
+                "kubernetes.io/os": "linux",
+                "node-role.kubernetes.io/control-plane": "",
+                "node.kubernetes.io/exclude-from-external-load-balancers": ""
+            },
+            "annotations": {
+                "kubeadm.alpha.kubernetes.io/cri-socket": "unix:///var/run/cri-dockerd.sock",
+                "node.alpha.kubernetes.io/ttl": "0",
+                "volumes.kubernetes.io/controller-managed-attach-detach": "true"
+            },
+            "status": [
+                {
+                    "last_heartbeat_time": "2024-10-01T14:47:37+00:00",
+                    "last_transition_time": "2024-05-23T14:47:47+00:00",
+                    "message": "kubelet has sufficient memory available",
+                    "reason": "KubeletHasSufficientMemory",
+                    "status": "False",
+                    "type": "MemoryPressure"
+                },
+                {
+                    "last_heartbeat_time": "2024-10-01T14:47:37+00:00",
+                    "last_transition_time": "2024-05-23T14:47:47+00:00",
+                    "message": "kubelet has no disk pressure",
+                    "reason": "KubeletHasNoDiskPressure",
+                    "status": "False",
+                    "type": "DiskPressure"
+                },
+                {
+                    "last_heartbeat_time": "2024-10-01T14:47:37+00:00",
+                    "last_transition_time": "2024-05-23T14:47:47+00:00",
+                    "message": "kubelet has sufficient PID available",
+                    "reason": "KubeletHasSufficientPID",
+                    "status": "False",
+                    "type": "PIDPressure"
+                },
+                {
+                    "last_heartbeat_time": "2024-10-01T14:47:37+00:00",
+                    "last_transition_time": "2024-08-01T08:41:05+00:00",
+                    "message": "kubelet is posting ready status",
+                    "reason": "KubeletReady",
+                    "status": "True",
+                    "type": "Ready"
+                }
+            ],
+            "capacity": {
+                "cpu": "16",
+                "ephemeral-storage": "1055762868Ki",
+                "hugepages-1Gi": "0",
+                "hugepages-2Mi": "0",
+                "memory": "16248688Ki",
+                "pods": "110"
+            },
+            "allocatable": {
+                "cpu": "16",
+                "ephemeral-storage": "972991057538",
+                "hugepages-1Gi": "0",
+                "hugepages-2Mi": "0",
+                "memory": "16146288Ki",
+                "pods": "110"
+            },
+            "creation_timestamp": "2024-05-23T14:47:48+00:00"
+        }
+    ]
+}
