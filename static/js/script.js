@@ -1,9 +1,9 @@
 $(document).ready(function() {
-    // Carica i dati dall'endpoint Flask
-    $.getJSON('/data', function(data) {
+    $.getJSON("/data", function(data) {
         console.log("Dati ricevuti:", data); // Log dei dati ricevuti
 
         let tableData = [];
+        let namespaces = new Set();
 
         // Processa deployments
         if (data.deployments) {
@@ -17,6 +17,10 @@ $(document).ready(function() {
                     "Creation Timestamp": item.creation_timestamp || "N/A",
                     "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
                 });
+
+                if (item.namespace) {
+                    namespaces.add(item.namespace);
+                }
             });
         }
 
@@ -32,6 +36,10 @@ $(document).ready(function() {
                     "Creation Timestamp": item.creation_timestamp || "N/A",
                     "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
                 });
+
+                if (item.namespace) {
+                    namespaces.add(item.namespace);
+                }
             });
         }
 
@@ -47,10 +55,17 @@ $(document).ready(function() {
                     "Creation Timestamp": item.creation_timestamp || "N/A",
                     "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
                 });
+
+                // I nodi generalmente non hanno namespace, quindi non aggiungiamo
             });
         }
 
         console.log("Table Data:", tableData); // Log dei dati della tabella
+
+        // Popola il filtro per i namespace
+        namespaces.forEach(function(ns) {
+            $('#namespaceFilter').append(new Option(ns, ns));
+        });
 
         // Inizializza DataTables
         let table = $('#inventory-table').DataTable({
@@ -68,12 +83,19 @@ $(document).ready(function() {
             responsive: true
         });
 
-        // Aggiungi filtro per tipo di risorsa
+        // Filtra la tabella in base al tipo di risorsa selezionato
         $('#resource-type').on('change', function() {
             let filterValue = this.value;
             table.column(0).search(filterValue).draw();
+        });
+
+        // Filtra la tabella in base al namespace selezionato
+        $('#namespaceFilter').on('change', function() {
+            let filterValue = this.value;
+            table.column(2).search(filterValue).draw(); // La colonna 2 è 'Namespace'
         });
     }).fail(function(jqXHR, textStatus, errorThrown) {
         console.error('Errore nel caricamento dei dati:', textStatus, errorThrown);
     });
 });
+

@@ -5,6 +5,7 @@ from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 from datetime import datetime
 
+
 def load_kube_config():
     """
     Carica la configurazione di Kubernetes.
@@ -16,6 +17,7 @@ def load_kube_config():
     except config.ConfigException:
         config.load_kube_config()
         print("Configurazione kubeconfig locale caricata.")
+
 
 def get_deployments(api_instance, namespace):
     try:
@@ -35,6 +37,7 @@ def get_deployments(api_instance, namespace):
         print(f"Errore nel recuperare i Deployments nel namespace {namespace}: {e}")
         return []
 
+
 def get_replicasets(api_instance, namespace):
     try:
         replicasets = api_instance.list_namespaced_replica_set(namespace=namespace)
@@ -53,6 +56,7 @@ def get_replicasets(api_instance, namespace):
         print(f"Errore nel recuperare i ReplicaSets nel namespace {namespace}: {e}")
         return []
 
+
 def get_statefulsets(api_instance, namespace):
     try:
         statefulsets = api_instance.list_namespaced_stateful_set(namespace=namespace)
@@ -70,6 +74,7 @@ def get_statefulsets(api_instance, namespace):
     except ApiException as e:
         print(f"Errore nel recuperare i StatefulSets nel namespace {namespace}: {e}")
         return []
+
 
 def get_nodes(api_instance):
     try:
@@ -91,12 +96,14 @@ def get_nodes(api_instance):
         print(f"Errore nel recuperare i nodi: {e}")
         return []
 
+
 # Encoder personalizzato per JSON che gestisce oggetti datetime
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.isoformat()
         return super().default(obj)
+
 
 def main():
     load_kube_config()
@@ -137,6 +144,7 @@ def main():
         json.dump(inventory, f, indent=4, cls=DateTimeEncoder)
 
     print("Inventario salvato in k8s_inventory.json")
+
 
 if __name__ == "__main__":
     main()

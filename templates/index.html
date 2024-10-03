@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kubernetes Inventory</title>
+    <!-- Link alla favicon (opzionale) -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- DataTables CSS -->
@@ -22,16 +24,29 @@
     <div class="container">
         <h1 class="text-center">Kubernetes Cluster Inventory</h1>
         
-    <!-- Filtro Risorse -->
-    <div class="mb-4">
-        <label for="resource-type">Filtra per Tipo di Risorsa:</label>
-        <select id="resource-type" class="form-control w-25">
-            <option value="">Tutti</option>
-            <option value="Deployment">Deployments</option>
-            <option value="StatefulSet">StatefulSets</option>
-            <option value="Node">Nodes</option>
-        </select>
-    </div>
+        <!-- Filtri Affiancati -->
+        <div class="row mb-4">
+            <!-- Filtro per Tipo di Risorsa -->
+            <div class="col-md-6">
+                <label for="resource-type">Filtra per Tipo di Risorsa:</label>
+                <select id="resource-type" class="form-control">
+                    <option value="">Tutte</option>
+                    <option value="Deployment">Deployments</option>
+                    <option value="StatefulSet">StatefulSets</option>
+                    <option value="Node">Nodes</option>
+                </select>
+            </div>
+            
+            <!-- Filtro per Namespace -->
+            <div class="col-md-6">
+                <label for="namespaceFilter">Filtra per Namespace:</label>
+                <select id="namespaceFilter" class="form-control">
+                    <option value="">Tutti i namespace</option>
+                    <!-- Opzioni dei namespace verranno aggiunte dinamicamente -->
+                </select>
+            </div>
+        </div>
+        
         <!-- Tabella dove verranno inseriti i dati -->
         <table id="inventory-table" class="table table-striped table-bordered">
             <thead>
