@@ -1,123 +1,79 @@
 $(document).ready(function() {
-    // Inizializza DataTables
-    var deploymentsTable = $('#deployments-table').DataTable();
-    var replicasetsTable = $('#replicasets-table').DataTable();
-    var statefulsetsTable = $('#statefulsets-table').DataTable();
-    var nodesTable = $('#nodes-table').DataTable();
+    // Carica i dati dall'endpoint Flask
+    $.getJSON('/data', function(data) {
+        console.log("Dati ricevuti:", data); // Log dei dati ricevuti
 
-    // Funzione per caricare e popolare le tabelle
-    function loadInventory() {
-        $.ajax({
-            url: '/api/inventory',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                populateDeployments(data.deployments);
-                populateReplicaSets(data.replicasets);
-                populateStatefulSets(data.statefulsets);
-                populateNodes(data.nodes);
-            },
-            error: function(error) {
-                console.error('Errore nel recupero dell\'inventario:', error);
-            }
-        });
-    }
+        let tableData = [];
 
-    // Funzioni per popolare le tabelle
-    function populateDeployments(deployments) {
-        deploymentsTable.clear();
-        deployments.forEach(function(dep) {
-            deploymentsTable.row.add([
-                dep.name,
-                dep.namespace,
-                dep.replicas,
-                dep.available_replicas || 0,
-                formatLabels(dep.labels),
-                dep.creation_timestamp
-            ]);
-        });
-        deploymentsTable.draw();
-    }
-
-    function populateReplicaSets(replicasets) {
-        replicasetsTable.clear();
-        replicasets.forEach(function(rs) {
-            replicasetsTable.row.add([
-                rs.name,
-                rs.namespace,
-                rs.replicas,
-                rs.available_replicas || 0,
-                formatLabels(rs.labels),
-                rs.creation_timestamp
-            ]);
-        });
-        replicasetsTable.draw();
-    }
-
-    function populateStatefulSets(statefulsets) {
-        statefulsetsTable.clear();
-        statefulsets.forEach(function(sts) {
-            statefulsetsTable.row.add([
-                sts.name,
-                sts.namespace,
-                sts.replicas,
-                sts.available_replicas || 0,
-                formatLabels(sts.labels),
-                sts.creation_timestamp
-            ]);
-        });
-        statefulsetsTable.draw();
-    }
-
-    function populateNodes(nodes) {
-        nodesTable.clear();
-        nodes.forEach(function(node) {
-            nodesTable.row.add([
-                node.name,
-                formatLabels(node.labels),
-                formatAnnotations(node.annotations),
-                formatConditions(node.status),
-                formatCapacity(node.capacity),
-                formatCapacity(node.allocatable),
-                node.creation_timestamp
-            ]);
-        });
-        nodesTable.draw();
-    }
-
-    // Funzioni di formattazione
-    function formatLabels(labels) {
-        if (!labels) return '';
-        return Object.entries(labels).map(([key, value]) => `${key}: ${value}`).join(', ');
-    }
-
-    function formatAnnotations(annotations) {
-        if (!annotations) return '';
-        return Object.entries(annotations).map(([key, value]) => `${key}: ${value}`).join(', ');
-    }
-
-    function formatConditions(conditions) {
-        if (!conditions) return '';
-        return conditions.map(cond => `${cond.type}: ${cond.status} (${cond.reason})`).join('; ');
-    }
-
-    function formatCapacity(capacity) {
-        if (!capacity) return '';
-        return Object.entries(capacity).map(([key, value]) => `${key}: ${value}`).join(', ');
-    }
-
-    // Carica l'inventario all'avvio
-    loadInventory();
-
-    // Gestisci i filtri
-    $('.resource-filter').change(function() {
-        var resource = $(this).val();
-        var isChecked = $(this).is(':checked');
-        if (isChecked) {
-            $(`#${resource}-section`).show();
-        } else {
-            $(`#${resource}-section`).hide();
+        // Processa deployments
+        if (data.deployments) {
+            data.deployments.forEach(function(item) {
+                tableData.push({
+                    "Resource Type": "Deployment",
+                    "Name": item.name || "N/A",
+                    "Namespace": item.namespace || "N/A",
+                    "Replicas": item.replicas || "N/A",
+                    "Available Replicas": item.available_replicas || "N/A",
+                    "Creation Timestamp": item.creation_timestamp || "N/A",
+                    "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
+                });
+            });
         }
+
+        // Processa statefulsets
+        if (data.statefulsets) {
+            data.statefulsets.forEach(function(item) {
+                tableData.push({
+                    "Resource Type": "StatefulSet",
+                    "Name": item.name || "N/A",
+                    "Namespace": item.namespace || "N/A",
+                    "Replicas": item.replicas || "N/A",
+                    "Available Replicas": item.available_replicas || "N/A",
+                    "Creation Timestamp": item.creation_timestamp || "N/A",
+                    "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
+                });
+            });
+        }
+
+        // Processa nodes
+        if (data.nodes) {
+            data.nodes.forEach(function(item) {
+                tableData.push({
+                    "Resource Type": "Node",
+                    "Name": item.name || "N/A",
+                    "Namespace": "N/A",
+                    "Replicas": "N/A",
+                    "Available Replicas": "N/A",
+                    "Creation Timestamp": item.creation_timestamp || "N/A",
+                    "Labels": item.labels ? JSON.stringify(item.labels) : "N/A"
+                });
+            });
+        }
+
+        console.log("Table Data:", tableData); // Log dei dati della tabella
+
+        // Inizializza DataTables
+        let table = $('#inventory-table').DataTable({
+            data: tableData,
+            columns: [
+                { data: 'Resource Type' },
+                { data: 'Name' },
+                { data: 'Namespace' },
+                { data: 'Replicas' },
+                { data: 'Available Replicas' },
+                { data: 'Creation Timestamp' },
+                { data: 'Labels' }
+            ],
+            destroy: true, // Permette di ricreare la tabella se esiste già
+            responsive: true
+        });
+
+        // Aggiungi filtro per tipo di risorsa
+        $('#resource-type').on('change', function() {
+            let filterValue = this.value;
+            table.column(0).search(filterValue).draw();
+        });
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error('Errore nel caricamento dei dati:', textStatus, errorThrown);
     });
 });
-
