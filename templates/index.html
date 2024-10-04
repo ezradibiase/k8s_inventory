@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubernetes Inventory</title>
+    <title>Kubernetes Cluster Inventory</title>
     <!-- Link alla favicon (opzionale) -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap CSS -->
@@ -14,16 +15,24 @@
         body {
             padding: 20px;
         }
+
         h1 {
             margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
         <h1 class="text-center">Kubernetes Cluster Inventory</h1>
-        
+
+        <!-- Genera pulsante creazione PDFi -->
+        <div class="mb-4">
+            <button id="generate-pdf" class="btn btn-primary">Genera PDF</button>
+            <!-- button id="generate-pdf" type="button">Genera PDF</button -->
+        </div>
+
         <!-- Filtri Affiancati -->
         <div class="row mb-4">
             <!-- Filtro per Tipo di Risorsa -->
@@ -36,7 +45,7 @@
                     <option value="Node">Nodes</option>
                 </select>
             </div>
-            
+
             <!-- Filtro per Namespace -->
             <div class="col-md-6">
                 <label for="namespaceFilter">Filtra per Namespace:</label>
@@ -46,7 +55,7 @@
                 </select>
             </div>
         </div>
-        
+
         <!-- Tabella dove verranno inseriti i dati -->
         <table id="inventory-table" class="table table-striped table-bordered">
             <thead>
@@ -65,7 +74,39 @@
             </tbody>
         </table>
     </div>
+    <!-- Creazione PDF -->
+    <script>
+        $(document).ready(function () {
+            // Funzione per caricare i dati
+            function loadData() {
+                $.getJSON('/data', function (data) {
+                    // Elimina i dati esistenti nella tabella
+                    $('#data-table tbody').empty();
 
+                    // Popola la tabella con i nuovi dati
+                    $.each(data.deployments, function (i, deployment) {
+                        $('#data-table tbody').append(`
+                            <tr>
+                                <td>${deployment.name}</td>
+                                <td>${deployment.namespace}</td>
+                                <td>${deployment.replicas}</td>
+                                <td>${deployment.available_replicas}</td>
+                            </tr>
+                        `);
+                    });
+                }).fail(function () {
+                    console.error("Errore nel caricamento dei dati.");
+                });
+            }
+
+            loadData(); // Carica i dati inizialmente
+
+            // Evento per il bottone Genera PDF
+            $("#generate-pdf").click(function () {
+                window.location.href = '/generate_pdf';
+            });
+        });
+    </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- DataTables JS -->
@@ -77,5 +118,5 @@
     <script src="/static/js/script.js"></script>
 
 </body>
-</html>
 
+</html>

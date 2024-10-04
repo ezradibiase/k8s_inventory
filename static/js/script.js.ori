@@ -1,4 +1,9 @@
-// Aggiungi l'evento per il bottone Genera PDF
+// $(document).ready(function() {
+//     $("#generate-pdf").click(function() {
+//         window.location.href = '/generate_pdf';
+//     });
+// });
+
 document.getElementById('generate-pdf').addEventListener('click', function() {
     // Raccogli i dati dei filtri
     const resourceType = document.getElementById('resource-type').value;
@@ -6,7 +11,7 @@ document.getElementById('generate-pdf').addEventListener('click', function() {
 
     // Invia una richiesta GET a /generate_pdf con i parametri dei filtri
     const url = `/generate_pdf?resource_type=${resourceType}&namespace=${namespace}`;
-    window.location.href = url; // Ricarica la pagina per scaricare il PDF
+    window.location.href = url;  // Cambia pagina e invia la richiesta
 });
 
 $(document).ready(function() {
