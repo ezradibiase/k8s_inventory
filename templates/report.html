@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapporto Inventario Kubernetes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @page {
+            size: A4 landscape; /* Imposta l'orientamento a orizzontale */
+            margin: 20mm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #4F81BD;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed; /* Impedisce alle colonne di espandersi oltre la larghezza del foglio */
+            word-wrap: break-word; /* Permette di andare a capo all'interno delle celle */
+        }
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #4F81BD;
+            color: white;
+            font-size: 12px;
+        }
+        td {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rapporto Inventario Kubernetes (Filtrato)</h1>
+
+    {% for resource, items in inventory.items() %}
+        {% if items %}
+            <h2>{{ resource.capitalize() }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        {% for header in headers[resource] %}
+                            <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            {% for key in keys[resource] %}
+                                <td>
+                                    {% if key == 'labels' or key == 'conditions' %}
+                                        {% if key == 'conditions' and item[key] %}
+                                            {% for condition in item[key] %}
+                                                {{ condition.type }}: {{ condition.status }}<br>
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ item[key] | tojson }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ item[key] }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>

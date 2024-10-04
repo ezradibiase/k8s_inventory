@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, jsonify, send_file, request
-from kubernetes import client, config
+import io
 import json
 import traceback
 import os
 import logging
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
-import io
+from flask import Flask, render_template, jsonify, send_file, request
+from kubernetes import client, config
+# from reportlab.lib.pagesizes import letter
+# from reportlab.lib.units import mm
+# from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+# from reportlab.lib.styles import getSampleStyleSheet
+# from reportlab.lib import colors
+from weasyprint import HTML, CSS
 
 app = Flask(__name__)
 
@@ -21,12 +23,19 @@ logging.basicConfig(level=logging.DEBUG)
 kubeconfig_path = os.environ.get('KUBECONFIG', '/home/ezrad/.kube/config')
 logging.debug(f"Usando KUBECONFIG: {kubeconfig_path}")
 
+
+def add_page_number(canvas, doc):
+    page_num = canvas.getPageNumber()
+    text = f"Pagina {page_num}"
+    canvas.setFont('Helvetica', 9)
+    canvas.drawRightString(200 * mm, 15 * mm, text)
+
 # Endpoint per generare il PDF
 @app.route('/generate_pdf', methods=['GET'])
 def generate_pdf():
     try:
         # Recupera i filtri dalla richiesta GET
-        resource_type = request.args.get('resource_type', default='', type=str)
+        resource_type = request.args.get('resource_type', default='', type=str).lower()
         namespace = request.args.get('namespace', default='', type=str)
 
         # Carica l'inventario
@@ -39,96 +48,53 @@ def generate_pdf():
             "nodes": []
         }
 
-        if resource_type == 'Deployment' or resource_type == '':
+        if resource_type == 'deployment' or resource_type == '':
             filtered_inventory['deployments'] = [
                 dep for dep in inventory['deployments']
                 if namespace == '' or dep['namespace'] == namespace
             ]
 
-        if resource_type == 'StatefulSet' or resource_type == '':
+        if resource_type == 'statefulset' or resource_type == '':
             filtered_inventory['statefulsets'] = [
                 sts for sts in inventory['statefulsets']
                 if namespace == '' or sts['namespace'] == namespace
             ]
 
-        if resource_type == 'Node' or resource_type == '':
+        if resource_type == 'node' or resource_type == '':
             filtered_inventory['nodes'] = inventory['nodes']  # I nodi non hanno namespace
 
         # Aggiungi un log per verificare i dati filtrati
         logging.debug(f"Inventario filtrato: {json.dumps(filtered_inventory, indent=2)}")
 
+        # Definisci le intestazioni e le chiavi per ogni risorsa
+        headers = {
+            "deployments": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+            "statefulsets": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+            "nodes": ["Name", "Status", "Conditions"]
+        }
+
+        keys = {
+            "deployments": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+            "statefulsets": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+            "nodes": ["name", "status", "conditions"]
+        }
+
+        # Prepara i dati per il template
+        template_data = {
+            "inventory": filtered_inventory,
+            "headers": headers,
+            "keys": keys
+        }
+
+        # Renderizza il template HTML con i dati
+        rendered_html = render_template('report.html', **template_data)
+
+        # Genera il PDF usando WeasyPrint
+        # Usa base_url per risolvere correttamente i percorsi relativi delle risorse statiche
+        pdf_file = HTML(string=rendered_html, base_url=request.base_url).write_pdf()
+
         # Crea un buffer in memoria per il PDF
-        buffer = io.BytesIO()
-
-        # Crea il documento PDF
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        elements = []
-
-        # Definisci gli stili
-        styles = getSampleStyleSheet()
-        title_style = styles['Title']
-        heading_style = styles['Heading2']
-        normal_style = styles['BodyText']
-
-        # Aggiungi il titolo
-        elements.append(Paragraph("Kubernetes Inventory Report (Filtered)", title_style))
-        elements.append(Spacer(1, 12))
-
-        # Funzione per creare una tabella per una determinata risorsa
-        def add_table(title, data, headers):
-            if not data:
-                return
-            elements.append(Paragraph(title, heading_style))
-            elements.append(Spacer(1, 12))
-
-            table_data = [headers]
-            for item in data:
-                row = []
-                for header in headers:
-                    if header.lower() in item:
-                        row.append(item[header.lower()])
-                    else:
-                        row.append('N/A')
-                table_data.append(row)
-
-            table = Table(table_data, repeatRows=1)
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0,0), (-1,0), colors.grey),
-                ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
-                ('ALIGN', (0,0), (-1,-1), 'LEFT'),
-                ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0,0), (-1,0), 12),
-                ('BACKGROUND', (0,1), (-1,-1), colors.beige),
-                ('GRID', (0,0), (-1,-1), 1, colors.black),
-            ]))
-            elements.append(table)
-            elements.append(Spacer(1, 24))
-        # Aggiungi Deployments
-        add_table(
-            "Deployments",
-            filtered_inventory['deployments'],
-            ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"]
-        )
-
-        # Aggiungi StatefulSets
-        add_table(
-            "StatefulSets",
-            filtered_inventory['statefulsets'],
-            ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"]
-        )
-
-        # Aggiungi Nodi
-        add_table(
-            "Nodes",
-            filtered_inventory['nodes'],
-            ["Name", "Status"]
-        )
-
-        # Costruisci il PDF
-        doc.build(elements)
-
-        # Riavvia il buffer a 0
-        buffer.seek(0)
+        buffer = io.BytesIO(pdf_file)
 
         # Restituisce il file PDF come risposta
         return send_file(buffer, as_attachment=True, download_name="k8s_inventory_filtered.pdf", mimetype='application/pdf')
@@ -137,6 +103,134 @@ def generate_pdf():
         logging.error(f"Errore nella generazione del PDF: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
+
+#@app.route('/generate_pdf', methods=['GET'])
+#def generate_pdf():
+#    try:
+#        # Recupera i filtri dalla richiesta GET
+#        resource_type = request.args.get('resource_type', default='', type=str)
+#        namespace = request.args.get('namespace', default='', type=str)
+#
+#        # Carica l'inventario
+#        inventory = load_k8s_inventory()
+#
+#        # Filtra i dati in base ai filtri
+#        filtered_inventory = {
+#            "deployments": [],
+#            "statefulsets": [],
+#            "nodes": []
+#        }
+#
+#        if resource_type.lower() == 'deployment' or resource_type == '':
+#            filtered_inventory['deployments'] = [
+#                dep for dep in inventory['deployments']
+#                if namespace == '' or dep['namespace'] == namespace
+#            ]
+#
+#        if resource_type.lower() == 'statefulset' or resource_type == '':
+#            filtered_inventory['statefulsets'] = [
+#                sts for sts in inventory['statefulsets']
+#                if namespace == '' or sts['namespace'] == namespace
+#            ]
+#
+#        if resource_type.lower() == 'node' or resource_type == '':
+#            filtered_inventory['nodes'] = inventory['nodes']  # I nodi non hanno namespace
+#
+#        # Aggiungi un log per verificare i dati filtrati
+#        logging.debug(f"Inventario filtrato: {json.dumps(filtered_inventory, indent=2)}")
+#
+#        # Definisci le intestazioni e le chiavi per ogni risorsa
+#        headers = {
+#            "deployments": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+#            "statefulsets": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+#            "nodes": ["Name", "Status", "Conditions"]
+#        }
+#
+#        keys = {
+#            "deployments": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+#            "statefulsets": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+#            "nodes": ["name", "status", "conditions"]
+#        }
+#
+#        # Prepara i dati per il template
+#        template_data = {
+#            "inventory": filtered_inventory,
+#            "headers": headers,
+#            "keys": keys
+#        }
+#
+#        # Renderizza il template HTML con i dati
+#        rendered_html = render_template('report.html', **template_data)
+#
+#        # Genera il PDF usando WeasyPrint
+#        pdf_file = HTML(string=rendered_html, base_url=request.base_url).write_pdf()
+#
+#        # Crea un buffer in memoria per il PDF
+#        buffer = io.BytesIO(pdf_file)
+#
+#        # Restituisce il file PDF come risposta
+#        return send_file(buffer, as_attachment=True, download_name="k8s_inventory_filtered.pdf", mimetype='application/pdf')
+#
+#    except Exception as e:
+#        logging.error(f"Errore nella generazione del PDF: {e}")
+#        traceback.print_exc()
+#        return jsonify({"error": str(e)}), 500
+
+@app.route('/test_report')
+def test_report():
+    # Dati di esempio
+    sample_inventory = {
+        "deployments": [
+            {
+                "name": "app1",
+                "namespace": "default",
+                "replicas": 3,
+                "available_replicas": 3,
+                "creation_timestamp": "2024-04-01T12:34:56Z",
+                "labels": {"app": "myapp", "tier": "backend"}
+            }
+        ],
+        "statefulsets": [
+            {
+                "name": "sts1",
+                "namespace": "prod",
+                "replicas": 2,
+                "available_replicas": 2,
+                "creation_timestamp": "2024-04-02T10:20:30Z",
+                "labels": {"app": "mysts", "tier": "frontend"}
+            }
+        ],
+        "nodes": [
+            {
+                "name": "node1",
+                "status": "Ready",
+                "conditions": [
+                    {"type": "Ready", "status": "True"}
+                ]
+            }
+        ]
+    }
+
+    headers = {
+        "deployments": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+        "statefulsets": ["Name", "Namespace", "Replicas", "Available Replicas", "Creation Timestamp", "Labels"],
+        "nodes": ["Name", "Status", "Conditions"]
+    }
+
+    keys = {
+        "deployments": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+        "statefulsets": ["name", "namespace", "replicas", "available_replicas", "creation_timestamp", "labels"],
+        "nodes": ["name", "status", "conditions"]
+    }
+
+    template_data = {
+        "inventory": sample_inventory,
+        "headers": headers,
+        "keys": keys
+    }
+
+    return render_template('report.html', **template_data)
 
 
 def load_k8s_inventory():
