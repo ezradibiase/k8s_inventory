@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Rapporto Inventario Kubernetes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         @page {
-            size: A4 landscape; /* Imposta l'orientamento a orizzontale */
+            size: A4 landscape;
             margin: 20mm;
         }
         body {
@@ -28,27 +27,49 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            table-layout: fixed; /* Impedisce alle colonne di espandersi oltre la larghezza del foglio */
-            word-wrap: break-word; /* Permette di andare a capo all'interno delle celle */
+            table-layout: fixed;
+            word-wrap: break-word;
+            page-break-inside: avoid;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tr {
+            page-break-inside: avoid;
         }
         th, td {
             border: 1px solid #666;
             padding: 8px;
-            text-align: left;
-            vertical-align: top;
+            text-align: center;
+            vertical-align: center;
+            font-size: 10px;
         }
         th {
             background-color: #4F81BD;
             color: white;
             font-size: 12px;
         }
-        td {
-            font-size: 10px;
+
+        /* Stile per restringere e centrare le colonne "Replicas" e "Available Replicas" */
+        .replica-column {
+            width: 60px;
+            text-align: center;
+            word-wrap: normal;
+            white-space: pre-wrap;
+            line-height: 1.2;
+        }
+
+        /* Colori alternati per le righe della tabella */
+        tbody tr:nth-child(odd) {
+            background-color: #f2f2f2; /* Grigio chiaro per righe dispari */
+        }
+        tbody tr:nth-child(even) {
+            background-color: white; /* Bianco per righe pari */
         }
     </style>
 </head>
 <body>
-    <h1>Rapporto Inventario Kubernetes (Filtrato)</h1>
+    <h1>Rapporto Inventario Kubernetes</h1>
 
     {% for resource, items in inventory.items() %}
         {% if items %}
@@ -57,7 +78,15 @@
                 <thead>
                     <tr>
                         {% for header in headers[resource] %}
-                            <th>{{ header }}</th>
+                            <th
+                                {% if header in ['Replicas', 'Available Replicas'] %}
+                                    class="replica-column"
+                                {% else %}
+                                    class="wide-column"
+                                {% endif %}
+                            >
+                                {{ header }}
+                            </th>
                         {% endfor %}
                     </tr>
                 </thead>
@@ -65,7 +94,13 @@
                     {% for item in items %}
                         <tr>
                             {% for key in keys[resource] %}
-                                <td>
+                                <td
+                                    {% if key in ['replicas', 'available_replicas'] %}
+                                        class="replica-column"
+                                    {% else %}
+                                        class="wide-column"
+                                    {% endif %}
+                                >
                                     {% if key == 'labels' or key == 'conditions' %}
                                         {% if key == 'conditions' and item[key] %}
                                             {% for condition in item[key] %}
@@ -87,3 +122,4 @@
     {% endfor %}
 </body>
 </html>
+

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubernetes Cluster Inventory</title>
+    <title>Inventario Cluster Kubernetes</title>
     <!-- Link alla favicon (opzionale) -->
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap CSS -->
@@ -19,30 +19,39 @@
         h1 {
             margin-bottom: 20px;
         }
+
+        /* Initially hide filters and data display */
+        #filters,
+        #data-display {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="container">
-        <h1 class="text-center">Kubernetes Cluster Inventory</h1>
+        <h1 class="text-center">Inventario Cluster Kubernetes</h1>
 
-        <!-- Genera pulsante creazione PDFi -->
+        <!-- Selettore Cluster Kubernetes -->
         <div class="mb-4">
-            <button id="generate-pdf" class="btn btn-primary">Genera PDF</button>
-            <!-- button id="generate-pdf" type="button">Genera PDF</button -->
+            <label for="cluster-select">Seleziona Cluster Kubernetes:</label>
+            <select id="cluster-select" class="form-control">
+                <option value="">-- Seleziona un Cluster --</option>
+                <!-- Opzioni dei cluster verranno aggiunte dinamicamente -->
+            </select>
         </div>
 
         <!-- Filtri Affiancati -->
-        <div class="row mb-4">
+        <div id="filters" class="row mb-4">
             <!-- Filtro per Tipo di Risorsa -->
             <div class="col-md-6">
                 <label for="resource-type">Filtra per Tipo di Risorsa:</label>
                 <select id="resource-type" class="form-control">
                     <option value="">Tutte</option>
-                    <option value="Deployment">Deployments</option>
-                    <option value="StatefulSet">StatefulSets</option>
-                    <option value="Node">Nodes</option>
+                    <option value="deployment">Deployments</option>
+                    <option value="statefulset">StatefulSets</option>
+                    <option value="node">Nodes</option>
                 </select>
             </div>
 
@@ -56,57 +65,32 @@
             </div>
         </div>
 
+        <!-- Pulsante Genera PDF -->
+        <div class="mb-4" id="pdf-button-container" style="display: none;">
+            <button id="generate-pdf" class="btn btn-primary">Genera PDF</button>
+        </div>
+
         <!-- Tabella dove verranno inseriti i dati -->
-        <table id="inventory-table" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Resource Type</th>
-                    <th>Name</th>
-                    <th>Namespace</th>
-                    <th>Replicas</th>
-                    <th>Available Replicas</th>
-                    <th>Creation Timestamp</th>
-                    <th>Labels</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- I dati verranno inseriti dinamicamente qui da script.js -->
-            </tbody>
-        </table>
+        <div id="data-display">
+            <table id="inventory-table" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tipo Risorsa</th>
+                        <th>Nome</th>
+                        <th>Namespace</th>
+                        <th>Repliche</th>
+                        <th>Repliche Disponibili</th>
+                        <th>Timestamp di Creazione</th>
+                        <th>Etichette</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- I dati verranno inseriti dinamicamente qui da script.js -->
+                </tbody>
+            </table>
+        </div>
     </div>
-    <!-- Creazione PDF -->
-    <script>
-        $(document).ready(function () {
-            // Funzione per caricare i dati
-            function loadData() {
-                $.getJSON('/data', function (data) {
-                    // Elimina i dati esistenti nella tabella
-                    $('#data-table tbody').empty();
 
-                    // Popola la tabella con i nuovi dati
-                    $.each(data.deployments, function (i, deployment) {
-                        $('#data-table tbody').append(`
-                            <tr>
-                                <td>${deployment.name}</td>
-                                <td>${deployment.namespace}</td>
-                                <td>${deployment.replicas}</td>
-                                <td>${deployment.available_replicas}</td>
-                            </tr>
-                        `);
-                    });
-                }).fail(function () {
-                    console.error("Errore nel caricamento dei dati.");
-                });
-            }
-
-            loadData(); // Carica i dati inizialmente
-
-            // Evento per il bottone Genera PDF
-            $("#generate-pdf").click(function () {
-                window.location.href = '/generate_pdf';
-            });
-        });
-    </script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- DataTables JS -->
@@ -114,9 +98,214 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Custom JS -->
-    <script src="/static/js/script.js"></script>
+    <!-- DataTables Initialization -->
+    <script>
+        $(document).ready(function () {
+            // Inizializza DataTable
+            var table = $('#inventory-table').DataTable();
+
+            // Funzione per caricare i contesti disponibili
+            function loadContexts() {
+                $.ajax({
+                    url: '/contexts',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.contexts) {
+                            response.contexts.forEach(function (context) {
+                                $('#cluster-select').append(
+                                    $('<option>', { value: context, text: context })
+                                );
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Errore nel recupero dei contesti:', error);
+                        alert('Errore nel recupero dei contesti Kubernetes.');
+                    }
+                });
+            }
+
+            // Funzione per caricare i namespace in base al cluster selezionato
+            function loadNamespaces(context) {
+                $.ajax({
+                    url: '/data',
+                    method: 'GET',
+                    data: { context: context },
+                    success: function (response) {
+                        var namespaces = new Set();
+                        if (response.deployments) {
+                            response.deployments.forEach(dep => namespaces.add(dep.namespace));
+                        }
+                        if (response.statefulsets) {
+                            response.statefulsets.forEach(sts => namespaces.add(sts.namespace));
+                        }
+                        // I nodi non hanno namespace
+                        // Pulisce le opzioni precedenti
+                        $('#namespaceFilter').empty().append('<option value="">Tutti i namespace</option>');
+                        namespaces.forEach(function (ns) {
+                            $('#namespaceFilter').append(
+                                $('<option>', { value: ns, text: ns })
+                            );
+                        });
+                    },
+                    error: function (error) {
+                        console.error('Errore nel recupero dei namespace:', error);
+                        alert('Errore nel recupero dei namespace.');
+                    }
+                });
+            }
+
+            // Funzione per caricare i dati basati sul cluster selezionato e sui filtri
+            function loadData() {
+                var selectedContext = $('#cluster-select').val();
+                var resourceType = $('#resource-type').val().toLowerCase();
+                var namespace = $('#namespaceFilter').val();
+
+                if (!selectedContext) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/data',
+                    method: 'GET',
+                    data: {
+                        context: selectedContext,
+                        resource_type: resourceType,
+                        namespace: namespace
+                    },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#inventory-table tbody').empty();
+                            alert('Errore nel caricamento dei dati: ' + response.error);
+                            return;
+                        }
+
+                        // Svuota la tabella
+                        table.clear().draw();
+
+                        // Funzione per aggiungere righe alla tabella
+                        function addRows(resourceType, items) {
+                            items.forEach(function (item) {
+                                table.row.add([
+                                    capitalizeFirstLetter(resourceType),
+                                    item.name || '-',
+                                    item.namespace || '-',
+                                    item.replicas || '-',
+                                    item.available_replicas || '-',
+                                    item.creation_timestamp || '-',
+                                    formatLabels(item.labels)
+                                ]).draw(false);
+                            });
+                        }
+
+                        // Aggiungi Deployments
+                        if (response.deployments && response.deployments.length > 0) {
+                            addRows('Deployment', response.deployments);
+                        }
+
+                        // Aggiungi StatefulSets
+                        if (response.statefulsets && response.statefulsets.length > 0) {
+                            addRows('StatefulSet', response.statefulsets);
+                        }
+
+                        // Aggiungi Nodes
+                        if (response.nodes && response.nodes.length > 0) {
+                            response.nodes.forEach(function (node) {
+                                table.row.add([
+                                    'Node',
+                                    node.name || '-',
+                                    '-', // Nodes non hanno namespace
+                                    '-', // Replicas non si applicano ai nodi
+                                    '-', // Available replicas non si applicano ai nodi
+                                    node.creation_timestamp || '-',
+                                    formatLabels(node.labels)
+                                ]).draw(false);
+                            });
+                        }
+
+                        // Mostra la sezione dei filtri e della tabella se ci sono dati
+                        if (response.deployments.length > 0 || response.statefulsets.length > 0 || response.nodes.length > 0) {
+                            $('#filters').show();
+                            $('#data-display').show();
+                            $('#pdf-button-container').show();
+                        } else {
+                            $('#filters').hide();
+                            $('#data-display').hide();
+                            $('#pdf-button-container').hide();
+                        }
+
+                        // Carica i namespace
+                        loadNamespaces(selectedContext);
+                    },
+                    error: function (error) {
+                        console.error('Errore nel caricamento dei dati:', error);
+                        alert('Errore nel caricamento dei dati.');
+                    }
+                });
+            }
+
+            // Funzione per formattare le etichette
+            function formatLabels(labels) {
+                if (!labels) return '-';
+                return Object.entries(labels).map(([key, value]) => `${key}: ${value}`).join(', ');
+            }
+
+            // Funzione per capitalizzare la prima lettera
+            function capitalizeFirstLetter(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            // Carica i contesti disponibili al caricamento della pagina
+            loadContexts();
+
+            // Evento per la selezione del cluster
+            $('#cluster-select').change(function () {
+                var selectedContext = $(this).val();
+                if (selectedContext) {
+                    // Mostra i filtri e la sezione dei dati
+                    $('#filters').show();
+                    $('#data-display').show();
+                    $('#pdf-button-container').show();
+
+                    // Carica i dati per il cluster selezionato
+                    loadData();
+                } else {
+                    // Nascondi i filtri e la sezione dei dati
+                    $('#filters').hide();
+                    $('#data-display').hide();
+                    $('#pdf-button-container').hide();
+
+                    // Svuota la tabella
+                    table.clear().draw();
+                }
+            });
+
+            // Evento per applicare i filtri
+            $('#resource-type, #namespaceFilter').change(function () {
+                loadData();
+            });
+
+            // Evento per il bottone Genera PDF
+            $("#generate-pdf").click(function () {
+                var selectedContext = $('#cluster-select').val();
+                var resourceType = $('#resource-type').val();
+                var namespace = $('#namespaceFilter').val();
+
+                if (!selectedContext) {
+                    alert('Per favore, seleziona un cluster Kubernetes prima di generare il PDF.');
+                    return;
+                }
+
+                // Costruisci l'URL con i parametri selezionati
+                var pdfUrl = `/generate_pdf?context=${encodeURIComponent(selectedContext)}&resource_type=${encodeURIComponent(resourceType)}&namespace=${encodeURIComponent(namespace)}`;
+                window.location.href = pdfUrl;
+            });
+        });
+    </script>
+    <!-- Custom JS (se necessario) -->
+    <!-- <script src="/static/js/script.js"></script> -->
 
 </body>
 
 </html>
+
