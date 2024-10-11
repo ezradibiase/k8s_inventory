@@ -27,8 +27,8 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            table-layout: fixed;
-            word-wrap: break-word;
+            table-layout: fixed; /* Impedisce alle colonne di espandersi oltre la larghezza del foglio */
+            word-wrap: break-word; /* Permette di andare a capo all'interno delle celle */
             page-break-inside: avoid;
         }
         thead {
@@ -41,7 +41,7 @@
             border: 1px solid #666;
             padding: 8px;
             text-align: center;
-            vertical-align: center;
+            vertical-align: middle;
             font-size: 10px;
         }
         th {
