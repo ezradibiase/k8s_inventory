@@ -277,7 +277,7 @@ def test_report():
     return render_template('report.html', **template_data)
 
 
-@app.route('/contexts', methods=['GET'])
+# @app.route('/contexts', methods=['GET'])
 # def get_contexts():
 #     try:
 #         kubeconfig = config.kube_config.KubeConfigLoader(
